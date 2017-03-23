@@ -10,6 +10,6 @@ npm install —-save morgan
 ## Table of Contents
 
 [Available Scripts](#available-scripts)
-  - [npm run build](#npm-run-build]
+  - [npm run build](#npm-run-build)
   - [npm start](#npm-start)
   - [npm run development](#npm-run-development)
