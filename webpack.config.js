@@ -10,7 +10,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loaders: ['babel?' + JSON.stringify({
+        loaders: ['babel-loader?' + JSON.stringify({
           cacheDirectory: true,
           presets: ['es2015', 'react']
         })],
