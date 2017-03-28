@@ -9,8 +9,15 @@ class App extends Component {
         super(props);
     }
     render() {
+        let re = /(login|register)/;
+        console.log(this.props.location.pathname);
+        let isAuth = re.test(this.props.location.pathname);
+        console.log(isAuth);
         return(
-            <Header/>
+          <div>
+            { isAuth ? undefined : <Header/> }
+            { this.props.children }
+          </div>
         );
     }
 }
