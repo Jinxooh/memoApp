@@ -28,9 +28,9 @@ class Header extends Component {
 
         const logoutBtn = (
           <li>
-            <Link to="logout">
+            <a onClick={this.props.onLogout}>
               <i className="material-icons">lock_open</i>
-            </Link>
+            </a>
           </li>
         );
 
@@ -47,7 +47,7 @@ class Header extends Component {
                   <div className="right">
                     <ul>
                       <li><Link to="home"><i className="material-icons">search</i></Link></li>
-                      { this.props.isLoggedIn ? loginBtn : logoutBtn}
+                      { this.props.isLoggedIn ? logoutBtn : loginBtn }
                       <li><Link to="register"><i className="material-icons">more_vert</i></Link></li>
                     </ul>
                   </div>

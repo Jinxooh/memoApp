@@ -63,6 +63,10 @@ app.use(_bodyParser2.default.json());
 
 app.use('/api', _routes2.default);
 
+app.get('*', function (req, res) {
+  res.sendFile(_path2.default.resolve(__dirname, './../public/index.html'));
+});
+
 // 라우터에서 throw err 가 실행되면 이 코드가 실행됩니다
 app.use(function (err, req, res, next) {
   console.error(err.stack);

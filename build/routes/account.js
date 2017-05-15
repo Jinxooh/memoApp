@@ -43,7 +43,7 @@ router.post('/signup', function (req, res) {
 
   /* need to check email exist */
 
-  Acccount.findOne({ username: req.body.username }, function (err, exists) {
+  Account.findOne({ username: req.body.username }, function (err, exists) {
     if (err) throw err;
     if (exists) {
       return res.status(409).json({

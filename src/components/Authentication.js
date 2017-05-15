@@ -9,7 +9,7 @@ const propTypes = {
 const defaultProps = {
   mode: true,
   onLogin: (id, pw) => { console.error("login function not defined"); },
-  onRegister: (id, pw) => { console.error("register function not defined"); }
+  onRegister: (id, pw, email) => { console.error("register function not defined"); }
 };
 
 class Authentication extends Component {
@@ -24,6 +24,8 @@ class Authentication extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
+        this.handleRegister = this.handleRegister.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
     handleChange(e) {
@@ -47,6 +49,34 @@ class Authentication extends Component {
       )
     }
 
+    handleRegister() {
+        let id = this.state.username;
+        let pw = this.state.password;
+        let email = this.state.email;
+
+        this.props.onRegister(id, pw, email).then(
+            (result) => {
+                if(!result) {
+                    this.setState({
+                        username: '',
+                        password: '',
+                        email: ''
+                    });
+                }
+            }
+        );
+    }
+
+    handleKeyPress(e) {
+       if(e.charCode==13) {
+           if(this.props.mode) {
+               this.handleLogin();
+           } else {
+               this.handleRegister();
+           }
+       }
+   }
+
     render() {
         const inputForm = (
           <div>
@@ -59,7 +89,7 @@ class Authentication extends Component {
                   onChange={this.handleChange}
                   value={this.state.username}
                   />
-                <label for="username">User name</label>
+                <label>User name</label>
               </div>
             </div>
             <div className="row">
@@ -70,8 +100,9 @@ class Authentication extends Component {
                   className="validate"
                   onChange={this.handleChange}
                   value={this.state.password}
+                  onKeyPress={this.handleKeyPress}
                   />
-                <label for="password">Password</label>
+                <label>Password</label>
               </div>
             </div>
           </div>
@@ -81,7 +112,6 @@ class Authentication extends Component {
           <div className="card-content">
             <div className="row">
                 <form className="col s12">
-                  {inputForm}
                   <div className="row">
                     <div className="input-field col s12 inline">
                       <input
@@ -91,10 +121,14 @@ class Authentication extends Component {
                         onChange={this.handleChange}
                         value={this.state.email}
                         />
-                      <label for="email" data-error="wrong" data-success="right">Email</label>
+                      <label data-error="wrong" data-success="right">Email</label>
 
                     </div>
-                    <a className="waves-effect waves-light btn">CREATE</a>
+                  </div>
+                  {inputForm}
+                  <div className="row">
+                    <a className="waves-effect waves-light btn"
+                      onClick={this.handleRegister}>CREATE</a>
                   </div>
                 </form>
               </div>
