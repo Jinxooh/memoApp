@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { Authentication } from '../components';
 import { connect } from 'react-redux';
-import { loginRequest } from '../actions/authentication';
+// import { loginRequest } from '../actions/authentication';
+import * as authActions from '../modules/authentication';
+
+import { bindActionCreators } from 'redux';
+
 
 const propTypes = {
 };
@@ -15,7 +19,8 @@ class Login extends Component {
     }
 
     handleLogin(id, pw) {
-      return this.props.loginRequest(id, pw).then(
+      const { AuthActions } = this.props;
+      return AuthActions.loginRequest(id, pw).then(
         () => {
           if(this.props.status === "SUCCESS") {
             let loginData = {
@@ -54,12 +59,8 @@ const mapStateToProps = (state) => {
   };
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    loginRequest: (id, pw) => {
-      return dispatch(loginRequest(id, pw));
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  AuthActions: bindActionCreators(authActions, dispatch)
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

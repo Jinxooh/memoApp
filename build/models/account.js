@@ -24,11 +24,11 @@ var Account = new Schema({
 });
 
 Account.methods.generateHash = function (password) {
-  return bcrypt.hashSync(password, 8);
+  return _bcryptjs2.default.hashSync(password, 8);
 };
 
 Account.methods.validateHash = function (password) {
-  return bcrypt.compareSync(password, this.password);
+  return _bcryptjs2.default.compareSync(password, this.password);
 };
 
 exports.default = _mongoose2.default.model('account', Account);

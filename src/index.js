@@ -5,11 +5,8 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import { App, Home, Login, Register, Wall } from './containers';
 
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import reducers from './reducers';
-import thunk from 'redux-thunk';
+import store from './store';
 
-const store = createStore(reducers, applyMiddleware(thunk));
 const rootElement = document.getElementById('root');
 const history = createBrowserHistory();
 

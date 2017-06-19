@@ -1,7 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Header } from '../components';
 import { connect } from 'react-redux';
-import { getStatusRequest, logoutRequest } from '../actions/authentication';
+// import { getStatusRequest, logoutRequest } from '../actions/authentication';
+import * as authActions from '../modules/authentication';
+
+import { bindActionCreators } from 'redux';
 
 
 const propTypes = {
@@ -36,7 +39,9 @@ class App extends Component {
 
        // page refreshed & has a session in cookie,
        // check whether this cookie is valid or not
-       this.props.getStatusRequest().then(
+       const { AuthActions } = this.props;
+
+       AuthActions.getStatusRequest().then(
            () => {
                console.log(this.props.status);
                // if session is not valid
@@ -59,7 +64,9 @@ class App extends Component {
    }
 
    handleLogout() {
-       this.props.logoutRequest().then(
+       const { AuthActions } = this.props;
+
+       AuthActions.logoutRequest().then(
            () => {
                Materialize.toast('Good Bye!', 2000);
 
@@ -96,15 +103,8 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getStatusRequest: () => {
-            return dispatch(getStatusRequest());
-        },
-        logoutRequest: () => {
-            return dispatch(logoutRequest());
-        }
-    };
-};
+const mapDispatchToProps = (dispatch) => ({
+    AuthActions: bindActionCreators(authActions, dispatch)
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

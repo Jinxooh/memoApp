@@ -34,7 +34,7 @@ router.post('/signup', function (req, res) {
     });
   }
 
-  if (emailRegex.test(req.body.email)) {
+  if (!emailRegex.test(req.body.email)) {
     return res.status(400).json({
       error: "BAD EMAIL ADDRESS",
       code: 3
@@ -43,7 +43,7 @@ router.post('/signup', function (req, res) {
 
   /* need to check email exist */
 
-  Account.findOne({ username: req.body.username }, function (err, exists) {
+  _account2.default.findOne({ username: req.body.username }, function (err, exists) {
     if (err) throw err;
     if (exists) {
       return res.status(409).json({
@@ -59,7 +59,6 @@ router.post('/signup', function (req, res) {
     });
 
     account.password = account.generateHash(account.password);
-
     account.save(function (err) {
       if (err) throw err;
       return res.json({ success: true });
@@ -118,6 +117,23 @@ router.post('/logout', function (req, res) {
     if (err) throw err;
   });
   return res.json({ success: true });
+});
+
+/*
+    SEARCH USER: GET /api/account/search/:username
+*/
+router.get('/search/:username', function (req, res) {
+  // SEARCH USERNAMES THAT STARTS WITH GIVEN KEYWORD USING REGEX
+  var re = new RegExp('^' + req.params.username);
+  _account2.default.find({ username: { $regex: re } }, { _id: false, username: true }).limit(5).sort({ username: 1 }).exec(function (err, accounts) {
+    if (err) throw err;
+    res.json(accounts);
+  });
+});
+
+// EMPTY SEARCH REQUEST: GET /api/account/search
+router.get('/search', function (req, res) {
+  res.json([]);
 });
 
 exports.default = router;

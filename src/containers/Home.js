@@ -1,13 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Write, MemoList } from '../components';
-import {
-  memoPostRequest,
-  memoListRequest,
-  memoEditRequest,
-  memoRemoveRequest,
-  memoStarRequest
-} from '../actions/memo';
+// import {
+//   memoPostRequest,
+//   memoListRequest,
+//   memoEditRequest,
+//   memoRemoveRequest,
+//   memoStarRequest
+// } from '../actions/memo';
+import * as memoActions from '../modules/memo';
+
+import { bindActionCreators } from 'redux';
+
 
 const propTypes = {
   username: React.PropTypes.string
@@ -33,9 +37,11 @@ class Home extends Component {
             loadingState: false
         };
     }
+    
 
     handleStar(id, index) {
-        this.props.memoStarRequest(id, index).then(
+        const { MemoActions } = this.props;
+        MemoActions.memoStarRequest(id, index).then(
             () => {
                 if(this.props.starStatus.status !== 'SUCCESS') {
                     /*
@@ -67,7 +73,8 @@ class Home extends Component {
     }
 
     handleEdit(id, index, contents) {
-        return this.props.memoEditRequest(id, index, contents).then(
+        const { MemoActions } = this.props;
+        return MemoActions.memoEditRequest(id, index, contents).then(
             () => {
                 if(this.props.editStatus.status==="SUCCESS") {
                     Materialize.toast('Success!', 2000);
@@ -120,7 +127,8 @@ class Home extends Component {
              };
 
       // DO THE INITIAL LOADING
-      this.props.memoListRequest(true, undefined, undefined, this.props.username).then(
+      const { MemoActions } = this.props;
+      MemoActions.memoListRequest(true, undefined, undefined, this.props.username).then(
           () => {
               // LOAD MEMO UNTIL SCROLLABLE
               setTimeout(loadUntilScrollable, 1000);
@@ -138,7 +146,7 @@ class Home extends Component {
            );
        };
 
-       this.props.memoListRequest(true).then(
+       MemoActions.memoListRequest(true).then(
            () => {
                // BEGIN NEW MEMO LOADING LOOP
                loadMemoLoop();
@@ -189,6 +197,7 @@ class Home extends Component {
 
     loadNewMemo() {
       console.log('loadNewMemo');
+      const { MemoActions } = this.props;
         // CANCEL IF THERE IS A PENDING REQUEST
         if(this.props.listStatus === 'WAITING')
             return new Promise((resolve, reject)=> {
@@ -197,14 +206,15 @@ class Home extends Component {
 
         // IF PAGE IS EMPTY, DO THE INITIAL LOADING
         if(this.props.memoData.length === 0 )
-           return this.props.memoListRequest(true, undefined, undefined, this.props.username);
+           return MemoActions.memoListRequest(true, undefined, undefined, this.props.username);
 
-       return this.props.memoListRequest(false, 'new', this.props.memoData[0]._id, this.props.username);
+       return MemoActions.memoListRequest(false, 'new', this.props.memoData[0]._id, this.props.username);
     }
 
     loadOldMemo() {
         // CANCEL IF USER IS READING THE LAST PAGE
         console.log('loadOldMemo');
+        const { MemoActions } = this.props;
         if(this.props.isLast) {
             return new Promise(
                 (resolve, reject)=> {
@@ -217,7 +227,7 @@ class Home extends Component {
         let lastId = this.props.memoData[this.props.memoData.length - 1]._id;
 
         // START REQUEST
-        return this.props.memoListRequest(false, 'old', lastId, this.props.username).then(() => {
+        return MemoActions.memoListRequest(false, 'old', lastId, this.props.username).then(() => {
             // IF IT IS LAST PAGE, NOTIFY
             if(this.props.isLast) {
                 Materialize.toast('You are reading the last page', 2000);
@@ -227,7 +237,9 @@ class Home extends Component {
 
     /* POST MEMO */
    handlePost(contents) {
-       return this.props.memoPostRequest(contents).then(
+        const { MemoActions } = this.props;
+
+       return MemoActions.memoPostRequest(contents).then(
            () => {
                if(this.props.postStatus.status === "SUCCESS") {
                    // TRIGGER LOAD NEW MEMO
@@ -265,7 +277,8 @@ class Home extends Component {
    }
 
    handleRemove(id, index) {
-        this.props.memoRemoveRequest(id, index).then(() => {
+       const { MemoActions } = this.props;
+        MemoActions.memoRemoveRequest(id, index).then(() => {
             if(this.props.removeStatus.status==="SUCCESS") {
                 // LOAD MORE MEMO IF THERE IS NO SCROLLBAR
                 // 1 SECOND LATER. (ANIMATION TAKES 1SEC)
@@ -364,24 +377,26 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        memoPostRequest: (contents) => {
-          return dispatch(memoPostRequest(contents));
-        },
-        memoListRequest: (isInitial, listType, id, username) => {
-          return dispatch(memoListRequest(isInitial, listType, id, username));
-        },
-        memoEditRequest: (id, index, contents) => {
-         return dispatch(memoEditRequest(id, index, contents));
-        },
-        memoRemoveRequest: (id, index) => {
-            return dispatch(memoRemoveRequest(id, index));
-        },
-        memoStarRequest: (id, index) => {
-          return dispatch(memoStarRequest(id, index));
-        }
-    };
-};
+const mapDispatchToProps = (dispatch) => ({
+    // return {
+    //     memoPostRequest: (contents) => {
+    //       return dispatch(memoPostRequest(contents));
+    //     },
+    //     memoListRequest: (isInitial, listType, id, username) => {
+    //       return dispatch(memoListRequest(isInitial, listType, id, username));
+    //     },
+    //     memoEditRequest: (id, index, contents) => {
+    //      return dispatch(memoEditRequest(id, index, contents));
+    //     },
+    //     memoRemoveRequest: (id, index) => {
+    //         return dispatch(memoRemoveRequest(id, index));
+    //     },
+    //     memoStarRequest: (id, index) => {
+    //       return dispatch(memoStarRequest(id, index));
+    //     }
+    // };
+
+    MemoActions: bindActionCreators(memoActions, dispatch)
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

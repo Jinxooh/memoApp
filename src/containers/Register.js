@@ -1,7 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { Authentication } from '../components';
 import { connect } from 'react-redux';
-import { registerRequest } from '../actions/authentication';
+// import { registerRequest } from '../actions/authentication';
+import * as authActions from '../modules/authentication';
+
+import { bindActionCreators } from 'redux';
 
 const propTypes = {
 };
@@ -14,7 +17,8 @@ class Register extends Component {
     }
 
     handleRegister(id, pw, email) {
-        return this.props.registerRequest(id, pw, email).then(
+        const { AuthActions } = this.props;
+        return AuthActions.registerRequest(id, pw, email).then(
             () => {
                 if(this.props.status === "SUCCESS") {
                     Materialize.toast('Success! Please log in.', 2000);
@@ -61,12 +65,8 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        registerRequest: (id, pw, email) => {
-            return dispatch(registerRequest(id, pw, email));
-        }
-    };
-};
+const mapDispatchToProps = (dispatch) => ({
+    AuthActions: bindActionCreators(authActions, dispatch)
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);
